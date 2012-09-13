@@ -1,0 +1,4 @@
+python-dateutil==2.1
+boto==2.5.2
+iso8601
+
