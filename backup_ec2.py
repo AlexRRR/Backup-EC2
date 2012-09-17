@@ -133,17 +133,20 @@ class Backup:
 
 if __name__ == "__main__":
     backup_type = False
+
     parser = optparse.OptionParser()
     options = [
     parser.add_option('-d', '--daily', action="store_true",
-        dest="daily", help="Daily backup"),
+        dest="daily", default=False, help="Daily backup"),
     parser.add_option('-w', '--weekly', action="store_true",
-        dest="weekly", help="Critical backup"),
+        dest="weekly", default=False, help="Critical backup"),
     parser.add_option('-m', '--monthly', action="store_true",
-        dest="monthly", help="Monthly backup")
+        dest="monthly", default=False, help="Monthly backup")
     ]
+
     (options, args) = parser.parse_args()
-    if not ((options.daily != options.weekly) != options.monthly):
+    flags = (options.daily, options.weekly, options.monthly)
+    if sum(flags) != 1:
         logger.error("You must select a single backup type")
         exit(2)
 
