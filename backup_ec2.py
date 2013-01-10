@@ -106,13 +106,14 @@ class Backup:
             start_date = iso8601.parse_date(snapshot.start_time).date()
             if start_date < self.oldest_date():
                 logger.info("Deleting snapshot %s" % snapshot.id)
+                conn.delete_snapshot(snapshot.id)
 
     @boto_connection
     def create_snapshots(self,volume_id,volume_name):
         """Creates the snapshots for each volume with the appropriate tags"""
         logger.info("Creating %s snapshot for %s" % (self.backup_type,volume_name))
-        #snap = conn.create_snapshot(volume_id,description=volume_name)
-        #snap.add_tag("backup",backup_type)
+        snap = conn.create_snapshot(volume_id,description=volume_name)
+        snap.add_tag("backup",backup_type)
 
     @boto_connection
     def start(self):
@@ -133,17 +134,20 @@ class Backup:
 
 if __name__ == "__main__":
     backup_type = False
+
     parser = optparse.OptionParser()
     options = [
     parser.add_option('-d', '--daily', action="store_true",
-        dest="daily", help="Daily backup"),
+        dest="daily", default=False, help="Daily backup"),
     parser.add_option('-w', '--weekly', action="store_true",
-        dest="weekly", help="Critical backup"),
+        dest="weekly", default=False, help="Critical backup"),
     parser.add_option('-m', '--monthly', action="store_true",
-        dest="monthly", help="Monthly backup")
+        dest="monthly", default=False, help="Monthly backup")
     ]
+
     (options, args) = parser.parse_args()
-    if not ((options.daily != options.weekly) != options.monthly):
+    flags = (options.daily, options.weekly, options.monthly)
+    if sum(flags) != 1:
         logger.error("You must select a single backup type")
         exit(2)
 

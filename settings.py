@@ -34,4 +34,4 @@ except EC2ResponseError as error:
 
 BACKUP_RETAIN = { 'daily': 4, 'weekly': 16, 'monthly': 1 }
 
-EXCLUDED_INSTANCES = ['excluded.server.name']
+EXCLUDED_INSTANCES = ['someserver1', 'someserver2']
